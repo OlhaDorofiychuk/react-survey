@@ -1,23 +1,29 @@
 import { useState } from "react";
+import AnswersList from "./AnswersList";
+import AnswersItem from "./AnswersItem";
+
 const initialFormState = {
   color: "",
   review: "",
   username: "",
   email: "",
-  spendTime: "",
+  spendTime: [],
 };
 
 function Main() {
   const [open, setOpen] = useState(false); //Ignore this state
   const [formState, setFormState] = useState(initialFormState);
+  const [answerList, setAnswerList] = useState([]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
     console.log("submitted:", formState);
+    setAnswerList([...answerList, formState]);
 
     setFormState(initialFormState);
   };
+  console.log("answers", answerList);
   console.log("state:", formState);
   const handleChange = (event) => {
     const targetValue = event.target.value;
@@ -29,7 +35,14 @@ function Main() {
       setFormState({ ...formState, color: targetValue });
     }
     if (targetName === "spend-time" && targetType === "checkbox") {
-      setFormState({ ...formState, spendTime: targetValue });
+      if (formState.spendTime.includes(targetValue)) {
+        return;
+      } else {
+        setFormState({
+          ...formState,
+          spendTime: [...formState.spendTime, targetValue],
+        });
+      }
     }
     if (targetName === "review") {
       setFormState({ ...formState, review: targetValue });
@@ -46,6 +59,7 @@ function Main() {
       <section className={`main__list ${open ? "open" : ""}`}>
         <h2>Answers list</h2>
         {/* answers should go here */}
+        <AnswersList answersList={answerList} />
       </section>
       <section className="main__form">
         {/* a form should be here */}
@@ -117,7 +131,7 @@ function Main() {
                     name="spend-time"
                     type="checkbox"
                     value="swimming"
-                    checked={formState.spendTime === "swimming"}
+                    checked={formState.spendTime.includes("swimming")}
                     onChange={handleChange}
                   />
                   Swimming
@@ -129,7 +143,7 @@ function Main() {
                     name="spend-time"
                     type="checkbox"
                     value="bathing"
-                    checked={formState.spendTime === "bathing"}
+                    checked={formState.spendTime.includes("bathing")}
                     onChange={handleChange}
                   />
                   Bathing
@@ -141,7 +155,7 @@ function Main() {
                     name="spend-time"
                     type="checkbox"
                     value="chatting"
-                    checked={formState.spendTime === "chatting"}
+                    checked={formState.spendTime.includes("chatting")}
                     onChange={handleChange}
                   />
                   Chatting
@@ -153,7 +167,7 @@ function Main() {
                     name="spend-time"
                     type="checkbox"
                     value="noTime"
-                    checked={formState.spendTime === "no Time"}
+                    checked={formState.spendTime.includes("noTime")}
                     onChange={handleChange}
                   />
                   I don't like to spend time with it
